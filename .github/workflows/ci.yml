@@ -167,7 +167,6 @@ jobs:
       # Build de l'app iOS pour le SIMULATEUR (aucune signature nécessaire).
       # Placé AVANT les tests pour que l'app soit disponible en artefact
       # même si un test échoue ensuite.
-      # -target (pas de scheme partagé commité dans le repo)
       # Une vraie .ipa installable sur iPhone exige un compte Apple Developer
       # (certificat + profil injectés en secrets)
       - name: Build iOS app (simulator)
@@ -177,16 +176,17 @@ jobs:
             -target iosApp \
             -configuration Debug \
             -sdk iphonesimulator \
-            SYMROOT="$PWD/iosApp/build" \
+            -derivedDataPath "$PWD/iosApp/build" \
             CODE_SIGNING_ALLOWED=NO
 
       # ditto préserve permissions et liens symboliques du bundle .app,
       # ce que le zip interne d'upload-artifact ne garantit pas.
       - name: Zip iOS app
-        run: ditto -c -k --keepParent iosApp/build/Debug-iphonesimulator/TPKMP.app TPKMP-simulator.zip
+        run: ditto -c -k --keepParent iosApp/build/Build/Products/Debug-iphonesimulator/TPKMP.app TPKMP-simulator.zip
 
       # App lançable dans un simulateur iOS (Xcode) : la dézipper puis la glisser sur le simulateur
       - name: Upload iOS app (simulator)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: iosApp-simulator
