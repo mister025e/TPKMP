@@ -176,13 +176,13 @@ jobs:
             -target iosApp \
             -configuration Debug \
             -sdk iphonesimulator \
-            -derivedDataPath "$PWD/iosApp/build" \
+            SYMROOT="$PWD/iosApp/build" \
             CODE_SIGNING_ALLOWED=NO
 
       # ditto préserve permissions et liens symboliques du bundle .app,
       # ce que le zip interne d'upload-artifact ne garantit pas.
       - name: Zip iOS app
-        run: ditto -c -k --keepParent iosApp/build/Build/Products/Debug-iphonesimulator/TPKMP.app TPKMP-simulator.zip
+        run: ditto -c -k --keepParent iosApp/build/Debug-iphonesimulator/TPKMP.app TPKMP-simulator.zip
 
       # App lançable dans un simulateur iOS (Xcode) : la dézipper puis la glisser sur le simulateur
       - name: Upload iOS app (simulator)
