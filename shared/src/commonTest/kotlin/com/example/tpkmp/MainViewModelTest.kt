@@ -14,6 +14,14 @@ class MainViewModelTest {
     // Test qui réalise une vraie requête réseau
     @Test
     fun testLoadWeathersRealRequest() {
+        // Utilisation de la clé API depuis le BuildConfig (local.properties / Secrets GitHub)
+        val apiKey = BuildConfig.WEATHER_API_KEY
+        
+        if (apiKey.isBlank()) {
+            println("Test sauté : WEATHER_API_KEY non configurée")
+            return
+        }
+
         val client = HttpClient {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true }, contentType = ContentType.Any)
@@ -24,7 +32,6 @@ class MainViewModelTest {
 
         viewModel.loadWeathers("Paris")
         
-        // Dans un test réel, on utiliserait runTest pour attendre la fin de la coroutine
-        // et vérifier que viewModel.dataList n'est plus vide.
+        // Dans un test réel avec runTest, on vérifierait que viewModel.dataList n'est plus vide.
     }
 }
